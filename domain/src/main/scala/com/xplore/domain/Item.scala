@@ -1,12 +1,12 @@
-package com.xplore
+package com.xplore.domain
 
 import java.util.UUID
 
-import com.xplore.Inventory._
+import com.xplore.domain.Item._
 
-case class Inventory(id: UUID, brand: Brand, category: Category, colour: Colour, size: Size, description: Description)
+case class Item(id: UUID, brand: Brand, category: Category, colour: Colour, size: Size, description: Description)
 
-object Inventory {
+object Item {
 
   case class Brand(value: String)
   case class Category(value: String)
