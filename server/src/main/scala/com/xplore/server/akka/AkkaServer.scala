@@ -7,12 +7,13 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import com.xplore.server.Server
 import com.xplore.server.Server.Handle
+import com.xplore.server.akka.routing.Router
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-class AkkaServer(serverConfig: AkkaServerConfig) extends Server[Future] {
+class AkkaServer(config: AkkaServerConfig, router: Router) extends Server[Future] {
 
   val log: Logger = LoggerFactory.getLogger(getClass)
 
@@ -20,15 +21,11 @@ class AkkaServer(serverConfig: AkkaServerConfig) extends Server[Future] {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  val r: Route = get {
-    complete("Hello")
-  }
-
   override def run(): Future[Server.Handle[Future]] = {
     log.info("Server starting..")
 
     Http()
-      .bindAndHandle(r, serverConfig.interface, serverConfig.port)
+      .bindAndHandle(router.routes, config.interface, config.port)
       .map { binding ⇒
         Handle[Future] {
           for {

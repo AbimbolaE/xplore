@@ -1,15 +1,17 @@
 import sbt._
-import sbt.librarymanagement.ModuleID
 
 object Dependencies {
 
   object Akka {
-    val `akka-http`: ModuleID = "com.typesafe.akka" %% "akka-http" % "10.1.7"
-    val `akka-stream`: ModuleID = "com.typesafe.akka" %% "akka-stream" % "2.5.19"
+    private val akkaHttpVersion = "10.1.7"
+
+    val `akka-http` = "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
+    val `akka-http-spray-json` = "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpVersion
+    val `akka-stream` = "com.typesafe.akka" %% "akka-stream" % "2.5.19"
   }
 
   object Cats {
-    val `cats-core`: ModuleID = "org.typelevel" %% "cats-core" % "1.5.0"
+    val `cats-core` = "org.typelevel" %% "cats-core" % "1.5.0"
   }
 
   object Slf4j {
@@ -26,7 +28,7 @@ object Dependencies {
   object PureConfig {
     val pureconfig = "com.github.pureconfig" %% "pureconfig" % "0.10.1"
   }
-  
+
   object Typesafe {
     val config = "com.typesafe" % "config" % "1.3.2"
   }

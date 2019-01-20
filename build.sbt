@@ -14,6 +14,7 @@ lazy val xplore = project in file(".")
 lazy val `xplore-domain` = module("domain")
 
 lazy val `xplore-database` = module("database")
+  .dependsOn(`xplore-domain`)
   .settings(
     libraryDependencies ++= Seq(
       `mongo-scala-driver`
@@ -21,17 +22,19 @@ lazy val `xplore-database` = module("database")
   )
 
 lazy val `xplore-server` = module("server")
+  .dependsOn(`xplore-domain`)
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
       `akka-http`,
+      `akka-http-spray-json`,
       `akka-stream`,
       `cats-core`
     )
   )
 
 lazy val `xplore-application` = module("application")
-  .dependsOn(`xplore-server`)
+  .dependsOn(`xplore-server`, `xplore-database`)
   .settings(commonSettings)
   .settings(
     fork := true,

@@ -1,9 +1,12 @@
 package com.xplore.application
 
 import com.xplore.application.config.{ApplicationConfig, SyncConfigLoader}
-import com.xplore.server.Server
+import com.xplore.database.ItemRepository
+import com.xplore.domain.validation.{RegionValidator, SizeValidator}
 import com.xplore.server.Server.Handle
 import com.xplore.server.akka.AkkaServer
+import com.xplore.server.akka.routing.{ItemRoutes, Router}
+import com.xplore.server.item.ItemPayloadValidator
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,7 +27,13 @@ object Application extends App {
   }
 
   val startServer = (config: ApplicationConfig) ⇒ {
-    val server: Server[Future] = new AkkaServer(config.server.akka)
+    val regionValidator = new RegionValidator
+    val sizeValidator = new SizeValidator(regionValidator)
+    val itemPayloadValidator = new ItemPayloadValidator(sizeValidator)
+    val itemRepository = new ItemRepository
+    val itemRoutes = new ItemRoutes(itemPayloadValidator, itemRepository)
+    val router = new Router(itemRoutes)
+    val server = new AkkaServer(config.server.akka, router)
     server.run()
   }
 
@@ -49,9 +58,14 @@ object Application extends App {
         log.info("Application startup failed..", ex)
     }
 
-  log.info("Enter `Q` to terminate the app..")
+  log.info("Press RETURN to terminate the app..")
 
-  while (StdIn.readLine() != null) {}
+  val stillRunning = () => {
+    val input = StdIn.readLine()
+    input != sys.props("line.separator") && input != ""
+  }
+
+  while (stillRunning()) {}
 
   log.info("Application terminating..")
 
