@@ -1,10 +1,10 @@
-package com.xplore.server.item
+package com.xplore.server.akka.item
 
 import akka.http.scaladsl.server.Directives.{provide, reject}
 import akka.http.scaladsl.server.{Directive1, ValidationRejection}
 import com.xplore.domain.Item
 import com.xplore.domain.validation.SizeValidator
-import com.xplore.server.akka.validation.PayloadValidator
+import com.xplore.server.akka.directives.PayloadValidator
 
 class ItemPayloadValidator(sizeValidator: SizeValidator) extends PayloadValidator[ItemPayload, Item] {
 
@@ -14,4 +14,9 @@ class ItemPayloadValidator(sizeValidator: SizeValidator) extends PayloadValidato
       .map { size => Item(payload.brand, payload.category, payload.colour, size, payload.description) }
       .fold(error => reject(ValidationRejection(error)), item => provide(item))
   }
+}
+
+object ItemPayloadValidator {
+
+  def apply() = new ItemPayloadValidator(SizeValidator())
 }

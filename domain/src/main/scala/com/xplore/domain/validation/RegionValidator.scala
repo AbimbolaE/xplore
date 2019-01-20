@@ -9,3 +9,8 @@ class RegionValidator {
 
   def validate(rawRegion: Region): Either[String, Region] = knownRegions.find(_ == rawRegion).toRight(s"$rawRegion is not a valid region")
 }
+
+object RegionValidator {
+
+  def apply() = new RegionValidator()
+}

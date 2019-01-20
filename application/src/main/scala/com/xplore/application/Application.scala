@@ -2,17 +2,17 @@ package com.xplore.application
 
 import com.xplore.application.config.{ApplicationConfig, SyncConfigLoader}
 import com.xplore.database.ItemRepository
-import com.xplore.domain.validation.{RegionValidator, SizeValidator}
 import com.xplore.server.Server.Handle
 import com.xplore.server.akka.AkkaServer
-import com.xplore.server.akka.routing.{ItemRoutes, Router}
-import com.xplore.server.item.ItemPayloadValidator
+import com.xplore.server.akka.item.ItemRoutes
+import com.xplore.server.akka.routing.{Router, SiteRoutes}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.io.StdIn
+import scala.sys.ShutdownHookThread
 import scala.util.{Failure, Success}
 
 object Application extends App {
@@ -27,12 +27,9 @@ object Application extends App {
   }
 
   val startServer = (config: ApplicationConfig) ⇒ {
-    val regionValidator = new RegionValidator
-    val sizeValidator = new SizeValidator(regionValidator)
-    val itemPayloadValidator = new ItemPayloadValidator(sizeValidator)
-    val itemRepository = new ItemRepository
-    val itemRoutes = new ItemRoutes(itemPayloadValidator, itemRepository)
-    val router = new Router(itemRoutes)
+    val siteRoutes = SiteRoutes()
+    val itemRoutes = ItemRoutes(ItemRepository())
+    val router = new Router(siteRoutes, itemRoutes)
     val server = new AkkaServer(config.server.akka, router)
     server.run()
   }
@@ -42,10 +39,9 @@ object Application extends App {
       Await.result(handle.shutdown(), 5.seconds)
       log.info("Application terminated..")
     }
-    ()
   }
 
-  val eventualStartup: Future[Unit] = for {
+  val eventualStartup: Future[ShutdownHookThread] = for {
     config ← fetchConfig()
     handle ← startServer(config)
   } yield addShutdownHook(handle)
@@ -56,6 +52,7 @@ object Application extends App {
         log.info("Application started..")
       case Failure(ex) ⇒
         log.info("Application startup failed..", ex)
+        sys.exit(1)
     }
 
   log.info("Press RETURN to terminate the app..")

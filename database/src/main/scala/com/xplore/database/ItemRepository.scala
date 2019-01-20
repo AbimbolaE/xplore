@@ -14,3 +14,8 @@ class ItemRepository extends Repository[Future, Item] {
   override def update(id: UUID, entity: Item): Future[UUID] = ???
   override def delete(id: UUID): Future[UUID] = ???
 }
+
+object ItemRepository {
+
+  def apply() = new ItemRepository()
+}

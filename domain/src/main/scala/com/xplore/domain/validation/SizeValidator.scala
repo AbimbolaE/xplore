@@ -24,3 +24,8 @@ class SizeValidator(regionValidator: RegionValidator) {
     } yield Size(region, size)
   }
 }
+
+object SizeValidator {
+
+  def apply() = new SizeValidator(RegionValidator())
+}

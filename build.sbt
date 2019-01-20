@@ -9,7 +9,8 @@ ThisBuild / name := "xplore"
 ThisBuild / version := "0.1"
 ThisBuild / scalaVersion := "2.12.8"
 
-lazy val xplore = project in file(".")
+lazy val xplore = module(".")
+  .aggregate(`xplore-domain`, `xplore-database`, `xplore-web`, `xplore-server`, `xplore-application`)
 
 lazy val `xplore-domain` = module("domain")
 
@@ -21,8 +22,10 @@ lazy val `xplore-database` = module("database")
     )
   )
 
+lazy val `xplore-web` = module("web")
+
 lazy val `xplore-server` = module("server")
-  .dependsOn(`xplore-domain`)
+  .dependsOn(`xplore-domain`, `xplore-web`)
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
@@ -30,7 +33,8 @@ lazy val `xplore-server` = module("server")
       `akka-http-spray-json`,
       `akka-stream`,
       `cats-core`
-    )
+    ),
+    unmanagedResourceDirectories in Compile += (`xplore-web` / resourceDirectory in Compile).value
   )
 
 lazy val `xplore-application` = module("application")
@@ -52,4 +56,4 @@ lazy val commonSettings = Seq(
   )
 )
 
-def module(name: String) = Project(name, file(name))
+def module(name: String) = Project(if (name == ".") "xplore" else name, file(name))

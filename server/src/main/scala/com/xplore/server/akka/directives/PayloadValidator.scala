@@ -1,4 +1,4 @@
-package com.xplore.server.akka.validation
+package com.xplore.server.akka.directives
 
 import akka.http.scaladsl.server.Directive1
 
