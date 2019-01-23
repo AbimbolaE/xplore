@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create a Product</title>
+        <link rel="stylesheet" href="/webjars/bootstrap/4.2.1/css/bootstrap.min.css">
+        <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+        <script src="/webjars/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+        <script type="module" src="/webjars/popper.js/1.14.3/popper.min.js"></script>
+        <script src="/webjars/angularjs/1.7.5/angular.js"></script>
+        <script src="/xplore.js"></script>
+        <script src="/product/create.js"></script>
+    </head>
+    <body ng-app="xplore">
+        <div class="container border mt-5" ng-controller="productController">
+            <div class="row mb-4">
+                <div class="col">
+                    <nav class="rounded navbar navbar-dark bg-primary mt-3">
+                        <span class="navbar-brand mb-0 h1">Create a Product</span>
+                    </nav>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col">
+                    <form name="product" ng-submit="create()" novalidate>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select name="category" ng-model="category" class="form-control" required>
+                                <option ng-repeat="c in categories">{{c}}</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <input name="brand" ng-model="brand" ng-minlength="2" type="text" class="form-control" required>
+                            <small ng-show="product.brand.$invalid && product.brand.$dirty" class="form-text text-muted">Brand is too short.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Colour</label>
+                            <input name="colour" ng-model="colour" ng-focus="colour = ''" type="text" class="form-control" list="colours" required>
+                            <datalist id="colours">
+                                <option value="Aquamarine"></option>
+                                <option value="Blue"></option>
+                                <option value="Brown"></option>
+                                <option value="Black"></option>
+                                <option value="Cyan"></option>
+                                <option value="Green"></option>
+                                <option value="Grey"></option>
+                                <option value="Indigo"></option>
+                                <option value="Lime"></option>
+                                <option value="Magenta"></option>
+                                <option value="Maroon"></option>
+                                <option value="Navy"></option>
+                                <option value="Olive"></option>
+                                <option value="Orange"></option>
+                                <option value="Pink"></option>
+                                <option value="Purple"></option>
+                                <option value="Red"></option>
+                                <option value="Silver"></option>
+                                <option value="Tan"></option>
+                                <option value="Teal"></option>
+                                <option value="Turquoise"></option>
+                                <option value="Violet"></option>
+                                <option value="White"></option>
+                                <option value="Yellow"></option>
+                            </datalist>
+                            <small ng-show="product.colour.$invalid && product.colour.$dirty" class="form-text text-muted">Colour must be selected.</small>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col">
+                                    <label>Region</label>
+                                    <select name="region" ng-model="region" class="form-control" required>
+                                        <option value="UK">UK</option>
+                                        <option value="US">US</option>
+                                        <option value="EU">EU</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label>Size</label>
+                                    <div class="input-group">
+                                        <div class="w-25 input-group-prepend">
+                                            <input ng-model="size" type="number" min="4" max="50" step="0.5" class="bg-light form-control" readonly>
+                                        </div>
+                                        <input name="size" ng-model="size" type="range" min="4" max="50" step="0.5" class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Heel</label>
+                            <input name="heel" ng-model="heel" ng-minlength="2" type="text" class="form-control" required>
+                            <small ng-show="product.heel.$invalid && product.heel.$dirty" class="form-text text-muted">Heel is too short.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Kind</label>
+                            <input name="kind" ng-model="kind" ng-minlength="2" type="text" class="form-control" required>
+                            <small ng-show="product.kind.$invalid && product.kind.$dirty" class="form-text text-muted">Kind is too short.</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Design</label>
+                            <input name="design" ng-model="design" ng-minlength="2" type="text" class="form-control" required>
+                            <small ng-show="product.design.$invalid && product.design.$dirty" class="form-text text-muted">Design is too short.</small>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" ng-disabled="product.$invalid" class="btn btn-primary my-3">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

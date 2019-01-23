@@ -10,10 +10,6 @@ object Dependencies {
     val `akka-stream` = "com.typesafe.akka" %% "akka-stream" % "2.5.19"
   }
 
-  object Cats {
-    val `cats-core` = "org.typelevel" %% "cats-core" % "1.5.0"
-  }
-
   object Slf4j {
     private val version = "1.7.5"
 
@@ -30,6 +26,13 @@ object Dependencies {
   }
 
   object Typesafe {
-    val config = "com.typesafe" % "config" % "1.3.2"
+    val typesafeConfig = "com.typesafe" % "config" % "1.3.3"
+  }
+
+  object Webjars {
+    val jquery = "org.webjars" % "jquery" % "3.3.1"
+    val bootstrap = "org.webjars" % "bootstrap" % "4.2.1"
+    val angularjs = "org.webjars" % "angularjs" % "1.7.5"
+    val `webjars-locator` = "org.webjars" % "webjars-locator" % "0.34"
   }
 }

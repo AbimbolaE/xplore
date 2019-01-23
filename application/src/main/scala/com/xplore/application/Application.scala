@@ -1,11 +1,11 @@
 package com.xplore.application
 
 import com.xplore.application.config.{ApplicationConfig, SyncConfigLoader}
-import com.xplore.database.ItemRepository
+import com.xplore.database.ProductRepository
 import com.xplore.server.Server.Handle
-import com.xplore.server.akka.AkkaServer
-import com.xplore.server.akka.item.ItemRoutes
-import com.xplore.server.akka.routing.{Router, SiteRoutes}
+import com.xplore.server.akka.{AkkaServer, Router}
+import com.xplore.server.akka.product.ProductRoutes
+import com.xplore.server.akka.web.WebRoutes
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,9 +27,9 @@ object Application extends App {
   }
 
   val startServer = (config: ApplicationConfig) ⇒ {
-    val siteRoutes = SiteRoutes()
-    val itemRoutes = ItemRoutes(ItemRepository())
-    val router = new Router(siteRoutes, itemRoutes)
+    val webRoutes = WebRoutes()
+    val productRoutes = ProductRoutes(ProductRepository())
+    val router = new Router(webRoutes, productRoutes)
     val server = new AkkaServer(config.server.akka, router)
     server.run()
   }

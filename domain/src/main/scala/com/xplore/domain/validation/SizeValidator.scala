@@ -9,7 +9,7 @@ class SizeValidator(regionValidator: RegionValidator) {
   private val validSizeRange: Seq[Int] = 4 to 50
 
   def validate(rawRegion: String, rawSize: String): Either[String, Size] = {
-    val errorOrSize = Try { rawSize.toInt }
+    val errorOrSize = Try { rawSize.toDouble }
       .filter(validSizeRange.contains)
       .filter(_ % 0.5 == 0)
       .toEither

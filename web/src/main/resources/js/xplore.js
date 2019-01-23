@@ -1,0 +1,1 @@
+const xploreApp = angular.module("xplore", []);

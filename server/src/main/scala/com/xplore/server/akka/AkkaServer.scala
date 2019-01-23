@@ -2,12 +2,9 @@ package com.xplore.server.akka
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import com.xplore.server.Server
 import com.xplore.server.Server.Handle
-import com.xplore.server.akka.routing.Router
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._

@@ -1,10 +1,9 @@
-package com.xplore.server.akka.routing
+package com.xplore.server.akka
 
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.{entity, _}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.unmarshalling.FromRequestUnmarshaller
 import com.xplore.domain.Repository
-import com.xplore.server.akka.directives.PayloadValidator
 
 import scala.concurrent.Future
 

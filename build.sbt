@@ -1,9 +1,9 @@
 import Dependencies.Akka._
-import Dependencies.Cats.`cats-core`
-import Dependencies.Mongo.`mongo-scala-driver`
-import Dependencies.PureConfig.pureconfig
+import Dependencies.Mongo._
+import Dependencies.PureConfig._
 import Dependencies.Slf4j._
-import Dependencies.Typesafe.config
+import Dependencies.Typesafe._
+import Dependencies.Webjars._
 
 ThisBuild / name := "xplore"
 ThisBuild / version := "0.1"
@@ -23,6 +23,13 @@ lazy val `xplore-database` = module("database")
   )
 
 lazy val `xplore-web` = module("web")
+  .settings(
+    libraryDependencies ++= Seq(
+      jquery,
+      bootstrap,
+      angularjs
+    )
+  )
 
 lazy val `xplore-server` = module("server")
   .dependsOn(`xplore-domain`, `xplore-web`)
@@ -32,9 +39,8 @@ lazy val `xplore-server` = module("server")
       `akka-http`,
       `akka-http-spray-json`,
       `akka-stream`,
-      `cats-core`
-    ),
-    unmanagedResourceDirectories in Compile += (`xplore-web` / resourceDirectory in Compile).value
+      `webjars-locator`
+    )
   )
 
 lazy val `xplore-application` = module("application")
@@ -44,7 +50,7 @@ lazy val `xplore-application` = module("application")
     fork := true,
     connectInput in run := true,
     libraryDependencies ++= Seq(
-      config,
+      typesafeConfig,
       pureconfig
     )
   )

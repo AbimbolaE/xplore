@@ -1,4 +1,4 @@
-package com.xplore.server.akka.directives
+package com.xplore.server.akka
 
 import akka.http.scaladsl.server.Directive1
 
