@@ -29,7 +29,9 @@ xploreApp.controller('productController', function ($scope, $http) {
         };
 
         $http
-            .post("/product", JSON.stringify(payload))
-            .then(console.log, console.log)
+            .post("/products", JSON.stringify(payload))
+            .then(console.log, console.log);
+
+        location.reload();
     }
 });

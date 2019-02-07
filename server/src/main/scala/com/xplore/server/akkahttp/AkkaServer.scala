@@ -1,16 +1,20 @@
-package com.xplore.server.akka
+package com.xplore.server.akkahttp
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
+import com.xplore.database.{RecordConverter, Repository}
+import com.xplore.database.mongo.product.ProductRecord
+import com.xplore.domain.Product
 import com.xplore.server.Server
 import com.xplore.server.Server.Handle
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.{Failure, Success}
 
-class AkkaServer(config: AkkaServerConfig, router: Router) extends Server[Future] {
+class AkkaServer(config: AkkaConfig, router: Router) extends Server[Future] {
 
   val log: Logger = LoggerFactory.getLogger(getClass)
 
@@ -22,7 +26,7 @@ class AkkaServer(config: AkkaServerConfig, router: Router) extends Server[Future
     log.info("Server starting..")
 
     Http()
-      .bindAndHandle(router.routes, config.interface, config.port)
+      .bindAndHandle(router.routes, config.host, config.port)
       .map { binding ⇒
         Handle[Future] {
           for {
@@ -32,5 +36,17 @@ class AkkaServer(config: AkkaServerConfig, router: Router) extends Server[Future
           } yield log.info("Server terminated..")
         }
       }
+      .andThen {
+        case Success(_) ⇒
+          log.info("Server started..")
+        case Failure(ex) ⇒
+          log.info("Server startup failed..", ex)
+      }
   }
+}
+
+object AkkaServer {
+
+  def apply(config: AkkaConfig, converter: RecordConverter[Product, ProductRecord], repository: Repository[Future, ProductRecord]) =
+    new AkkaServer(config, Router(converter, repository))
 }

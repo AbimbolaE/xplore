@@ -1,4 +1,4 @@
-package com.xplore.server.akka.web
+package com.xplore.server.akkahttp.web
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route

@@ -1,11 +1,11 @@
 package com.xplore.application
 
-import com.xplore.application.config.{ApplicationConfig, SyncConfigLoader}
-import com.xplore.database.ProductRepository
+import com.xplore.application.config.SyncConfigLoader
+import com.xplore.database.mongo.product.{ProductRecordConverter, ProductRepository}
+import com.xplore.database.mongo.{MongoConfig, MongoDatabaseFactory}
 import com.xplore.server.Server.Handle
-import com.xplore.server.akka.{AkkaServer, Router}
-import com.xplore.server.akka.product.ProductRoutes
-import com.xplore.server.akka.web.WebRoutes
+import com.xplore.server.akkahttp.{AkkaConfig, AkkaServer}
+import org.mongodb.scala.MongoDatabase
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,14 +23,18 @@ object Application extends App {
 
   val fetchConfig = () ⇒ {
     val configLoader = new SyncConfigLoader()
-    Future.fromTry(configLoader.load())
+    val configAttempt = configLoader.load()
+    Future.fromTry(configAttempt)
   }
 
-  val startServer = (config: ApplicationConfig) ⇒ {
-    val webRoutes = WebRoutes()
-    val productRoutes = ProductRoutes(ProductRepository())
-    val router = new Router(webRoutes, productRoutes)
-    val server = new AkkaServer(config.server.akka, router)
+  val initialiseDatabase = (config: MongoConfig) ⇒ Future {
+    val factory = MongoDatabaseFactory(config)
+    val database = factory.create()
+    database
+  }
+
+  val startServer = (config: AkkaConfig, database: MongoDatabase) ⇒ {
+    val server = AkkaServer(config, ProductRecordConverter(), ProductRepository(database))
     server.run()
   }
 
@@ -41,10 +45,13 @@ object Application extends App {
     }
   }
 
-  val eventualStartup: Future[ShutdownHookThread] = for {
-    config ← fetchConfig()
-    handle ← startServer(config)
-  } yield addShutdownHook(handle)
+  val eventualStartup: Future[ShutdownHookThread] = {
+    for {
+      config ← fetchConfig()
+      database ← initialiseDatabase(config.database.mongo)
+      handle ← startServer(config.server.akka, database)
+    } yield addShutdownHook(handle)
+  }
 
   eventualStartup
     .andThen {

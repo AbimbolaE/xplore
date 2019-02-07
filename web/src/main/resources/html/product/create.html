@@ -21,7 +21,7 @@
             </div>
             <div class="row mb-2">
                 <div class="col">
-                    <form name="product" ng-submit="create()" novalidate>
+                    <form name="product" novalidate>
                         <div class="form-group">
                             <label>Category</label>
                             <select name="category" ng-model="category" class="form-control" required>
@@ -101,7 +101,7 @@
                             <small ng-show="product.design.$invalid && product.design.$dirty" class="form-text text-muted">Design is too short.</small>
                         </div>
                         <div class="form-group">
-                            <button type="submit" ng-disabled="product.$invalid" class="btn btn-primary my-3">Create</button>
+                            <button type="button" ng-click="create()" ng-disabled="product.$invalid" class="btn btn-primary my-3">Create</button>
                         </div>
                     </form>
                 </div>

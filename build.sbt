@@ -6,7 +6,6 @@ import Dependencies.Typesafe._
 import Dependencies.Webjars._
 
 ThisBuild / name := "xplore"
-ThisBuild / version := "0.1"
 ThisBuild / scalaVersion := "2.12.8"
 
 lazy val xplore = module(".")
@@ -16,6 +15,7 @@ lazy val `xplore-domain` = module("domain")
 
 lazy val `xplore-database` = module("database")
   .dependsOn(`xplore-domain`)
+  .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
       `mongo-scala-driver`
@@ -32,7 +32,7 @@ lazy val `xplore-web` = module("web")
   )
 
 lazy val `xplore-server` = module("server")
-  .dependsOn(`xplore-domain`, `xplore-web`)
+  .dependsOn(`xplore-domain`, `xplore-web`, `xplore-database`)
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
@@ -45,14 +45,16 @@ lazy val `xplore-server` = module("server")
 
 lazy val `xplore-application` = module("application")
   .dependsOn(`xplore-server`, `xplore-database`)
+  .enablePlugins(JavaAppPackaging)
   .settings(commonSettings)
   .settings(
     fork := true,
     connectInput in run := true,
+    mappings in (Compile, packageDoc) := Nil,
     libraryDependencies ++= Seq(
       typesafeConfig,
       pureconfig
-    )
+    ) 
   )
 
 lazy val commonSettings = Seq(
