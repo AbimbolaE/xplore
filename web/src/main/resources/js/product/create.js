@@ -30,8 +30,7 @@ xploreApp.controller('productController', function ($scope, $http) {
 
         $http
             .post("/products", JSON.stringify(payload))
-            .then(console.log, console.log);
-
-        location.reload();
+            .then(console.log, console.log)
+            .then(location.reload);
     }
 });
