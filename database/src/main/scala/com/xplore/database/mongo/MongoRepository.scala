@@ -1,30 +1,26 @@
 package com.xplore.database.mongo
 
-import com.xplore.database.Record.ID
-import com.xplore.database.{Record, Repository}
+import com.mongodb.client.model.FindOneAndReplaceOptions
+import com.xplore.database.entity.Record.ID
+import com.xplore.database.entity.{Record, RecordRepository}
+import org.mongodb.scala.MongoDatabase
 import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.{MongoCollection, MongoDatabase, MongoException}
-import org.slf4j.{Logger, LoggerFactory}
+import org.mongodb.scala.model.ReturnDocument
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.reflect.ClassTag
 
-abstract class MongoRepository[R <: Record : ClassTag](collectionName: String, database: MongoDatabase) extends Repository[Future, R] {
+abstract class MongoRepository[R <: Record : ClassTag](collectionName: String, database: MongoDatabase) extends RecordRepository[Future, R] {
 
-  private val logger: Logger = LoggerFactory.getLogger(getClass)
-  private val collection: MongoCollection[R] = database.getCollection[R](collectionName)
+  private val collection = database.getCollection[R](collectionName)
+  private val updateOptions = new FindOneAndReplaceOptions().returnDocument(ReturnDocument.AFTER)
 
   override def create(record: R): Future[Option[R]] = {
     collection
       .insertOne(record)
       .toFuture()
-      .map(_ ⇒ Option(record))
-      .recover {
-        case ex: MongoException =>
-          logger.warn(s"Failed to create an record in $collectionName", ex)
-          Option.empty[R]
-      }
+      .map { _ => Option(record) }
   }
 
   override def read(): Future[Seq[R]] = {
@@ -37,25 +33,23 @@ abstract class MongoRepository[R <: Record : ClassTag](collectionName: String, d
     collection
       .find(equal("id", id))
       .toFuture()
-      .map(_.headOption)
+      .map { _.headOption }
   }
 
   override def update(record: R): Future[Option[R]] = {
     collection
-      .findOneAndReplace(equal("id", record.id), record)
+      .findOneAndReplace(equal("id", record.id), record, updateOptions)
       .toFuture()
-      .map(_ ⇒ Option(record))
+      .map { Option.apply[R] }
   }
 
-  override def delete(id: ID): Future[ID] = {
+  override def delete(id: ID): Future[Option[ID]] = {
     collection
       .deleteOne(equal("id", id))
       .toFuture()
-      .map(_ ⇒ id)
-      .recover {
-        case ex: MongoException =>
-          logger.warn(s"Failed to delete an record in $collectionName", ex)
-          id
+      .map { result =>
+        if (result.getDeletedCount == 1) Some(id)
+        else None
       }
   }
 }

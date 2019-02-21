@@ -1,6 +1,5 @@
 package com.xplore.database.mongo
 
-import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.{MongoClient, MongoClientSettings, MongoDatabase, ServerAddress}
 
 import scala.collection.JavaConverters._

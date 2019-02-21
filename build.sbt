@@ -1,4 +1,5 @@
 import Dependencies.Akka._
+import Dependencies.Cats._
 import Dependencies.Mongo._
 import Dependencies.PureConfig._
 import Dependencies.Slf4j._
@@ -10,15 +11,24 @@ ThisBuild / scalaVersion := "2.12.8"
 
 lazy val xplore = module(".")
   .aggregate(`xplore-domain`, `xplore-database`, `xplore-web`, `xplore-server`, `xplore-application`)
+  .settings(
+    stage / aggregate := false
+  )
 
 lazy val `xplore-domain` = module("domain")
+  .settings(
+    libraryDependencies ++= Seq(
+      `cats-core`
+    )
+  )
 
 lazy val `xplore-database` = module("database")
   .dependsOn(`xplore-domain`)
   .settings(commonSettings)
   .settings(
     libraryDependencies ++= Seq(
-      `mongo-scala-driver`
+      `mongo-scala-driver`,
+      `cats-core`
     )
   )
 
@@ -48,13 +58,15 @@ lazy val `xplore-application` = module("application")
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings)
   .settings(
-    fork := true,
+    outputStrategy := Some(StdoutOutput),
+    fork in run := true,
+    javaOptions in run := Seq("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"),
     connectInput in run := true,
-    mappings in (Compile, packageDoc) := Nil,
+    mappings in (Compile / packageDoc) := Nil,
     libraryDependencies ++= Seq(
       typesafeConfig,
       pureconfig
-    ) 
+    )
   )
 
 lazy val commonSettings = Seq(

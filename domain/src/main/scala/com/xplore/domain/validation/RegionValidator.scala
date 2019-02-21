@@ -1,11 +1,17 @@
 package com.xplore.domain.validation
 
-import com.xplore.domain.Region
-import com.xplore.domain.Regions
+import cats.data.{NonEmptyChain, Validated}
+import com.xplore.domain.{Region, Regions}
 
 class RegionValidator {
 
-  def validate(rawRegion: Region): Either[String, Region] = Regions.all.find(_ == rawRegion).toRight(s"$rawRegion is not a valid region")
+  def validate(rawRegion: Region): Validated[NonEmptyChain[String], Region] = {
+    Regions
+      .all
+      .find(_ == rawRegion)
+      .toRight(NonEmptyChain.one(s"$rawRegion is not a valid region"))
+      .fold(Validated.invalid, Validated.valid)
+  }
 }
 
 object RegionValidator {

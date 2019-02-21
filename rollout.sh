@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #Prebuild
-sbt clean stage
+sbt clean application/stage
 
 #Build
 version=`sbt -Dsbt.log.noformat=true "show application/version" | tail -n 1 | awk '{print $2}'`

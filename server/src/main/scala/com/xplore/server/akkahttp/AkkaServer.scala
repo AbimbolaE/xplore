@@ -3,9 +3,8 @@ package com.xplore.server.akkahttp
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import com.xplore.database.{RecordConverter, Repository}
-import com.xplore.database.mongo.product.ProductRecord
-import com.xplore.domain.Product
+import com.xplore.database.entity.RecordRepository
+import com.xplore.database.mongo.entity.product.ProductRecord
 import com.xplore.server.Server
 import com.xplore.server.Server.Handle
 import org.slf4j.{Logger, LoggerFactory}
@@ -40,13 +39,14 @@ class AkkaServer(config: AkkaConfig, router: Router) extends Server[Future] {
         case Success(_) ⇒
           log.info("Server started..")
         case Failure(ex) ⇒
-          log.info("Server startup failed..", ex)
+          log.warn("Server startup failed..", ex)
       }
   }
 }
 
 object AkkaServer {
 
-  def apply(config: AkkaConfig, converter: RecordConverter[Product, ProductRecord], repository: Repository[Future, ProductRecord]) =
-    new AkkaServer(config, Router(converter, repository))
+  def apply(config: AkkaConfig, repository: RecordRepository[Future, ProductRecord]): AkkaServer = {
+    new AkkaServer(config, Router(repository))
+  }
 }

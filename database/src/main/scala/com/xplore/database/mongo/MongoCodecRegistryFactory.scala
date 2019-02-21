@@ -1,6 +1,6 @@
 package com.xplore.database.mongo
 
-import com.xplore.database.mongo.product.ProductRecord
+import com.xplore.database.mongo.entity.product.ProductRecord
 import org.bson.UuidRepresentation
 import org.bson.codecs.UuidCodec
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}

@@ -1,7 +1,7 @@
 package com.xplore.application
 
 import com.xplore.application.config.SyncConfigLoader
-import com.xplore.database.mongo.product.{ProductRecordConverter, ProductRepository}
+import com.xplore.database.mongo.entity.product.ProductRecordRepository
 import com.xplore.database.mongo.{MongoConfig, MongoDatabaseFactory}
 import com.xplore.server.Server.Handle
 import com.xplore.server.akkahttp.{AkkaConfig, AkkaServer}
@@ -34,7 +34,7 @@ object Application extends App {
   }
 
   val startServer = (config: AkkaConfig, database: MongoDatabase) ⇒ {
-    val server = AkkaServer(config, ProductRecordConverter(), ProductRepository(database))
+    val server = AkkaServer(config, ProductRecordRepository(database))
     server.run()
   }
 

@@ -26,5 +26,5 @@ class SyncConfigLoader extends ConfigLoader[Try] with EnvironmentDetection {
 
 object SyncConfigLoader {
 
-  case class ConfigException(failures: ConfigReaderFailures) extends RuntimeException(failures.toString)
+  case class ConfigException(failures: ConfigReaderFailures) extends RuntimeException(failures.toList.map(_.description).mkString)
 }

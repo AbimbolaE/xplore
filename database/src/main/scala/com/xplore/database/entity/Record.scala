@@ -1,8 +1,8 @@
-package com.xplore.database
+package com.xplore.database.entity
 
 import java.util.UUID
 
-import com.xplore.database.Record.ID
+import com.xplore.database.entity.Record.ID
 
 trait Record {
   val id: ID

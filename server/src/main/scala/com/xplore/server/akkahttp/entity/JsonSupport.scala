@@ -1,11 +1,11 @@
-package com.xplore.server.akkahttp
+package com.xplore.server.akkahttp.entity
 
 import java.util.UUID
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import com.xplore.domain.{Brand, Category, Colour, Product, Region, Size}
-import com.xplore.server.payload.ProductPayload
-import spray.json._
+import com.xplore.domain.{Brand, Category, Colour, Region, Size}
+import com.xplore.server.entity.product.{ProductRequest, ProductResponse}
+import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat, RootJsonFormat, deserializationError}
 
 import scala.util.Try
 
@@ -55,7 +55,7 @@ object JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 
   implicit val sizeFormat: RootJsonFormat[Size] = jsonFormat2(Size.apply)
 
-  implicit val productFormat: RootJsonFormat[Product] = jsonFormat6(Product.apply)
+  implicit val productResponseFormat: RootJsonFormat[ProductResponse] = jsonFormat7(ProductResponse.apply)
 
-  implicit val productPayloadFormat: RootJsonFormat[ProductPayload] = jsonFormat6(ProductPayload.apply)
+  implicit val productRequestFormat: RootJsonFormat[ProductRequest] = jsonFormat6(ProductRequest.apply)
 }
