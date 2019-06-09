@@ -9,9 +9,9 @@ import com.xplore.server.akkahttp.web.WebRoutes
 
 import scala.concurrent.Future
 
-class Router(webRoutes: WebRoutes, productRoutes: ProductRoutes) {
+class Router(webRoutes: WebRoutes, productRoutes: ProductRoutes) extends CorsSupport {
 
-  val routes: Route = webRoutes.route ~ productRoutes.route
+  val routes: Route = webRoutes.route ~ corsHandler(productRoutes.route)
 }
 
 object Router {
